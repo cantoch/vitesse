@@ -31,6 +31,9 @@ final class CandidateController: RouteCollection {
         protectedRoutes.put(":candidateID", use: updateCandidate)
             .description("Update a candidate by ID")
         
+        protectedRoutes.delete(":candidateID", use: removeCandidate)
+            .description("Remove a candidate by ID")
+        
         protectedRoutes.post(":candidateID", "favorite", use: favoriteCandidate)
             .description("Mark a candidate as favorite (Admin only)")
     }
@@ -60,6 +63,15 @@ final class CandidateController: RouteCollection {
                 candidate.id = id
                 return candidate.save(on: req.db).map { candidate }
             }
+    }
+    
+    func removeCandidate(req: Request) async throws -> HTTPStatus {
+        guard let candidate = try await Candidate.find(req.parameters.get("candidateID"), on: req.db) else {
+            throw Abort(.notFound)
+        }
+            
+        try await candidate.delete(on: req.db)
+        return .ok
     }
 
     func favoriteCandidate(req: Request) throws -> EventLoopFuture<Candidate> {

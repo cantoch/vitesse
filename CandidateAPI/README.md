@@ -211,6 +211,18 @@ Exemple de réponse:
 }
 ```
 
+### `DELETE /candidate/:candidateId`
+
+Description: Permet de supprimer un candidate
+
+Header:
+
+- `Authorization`: "Bearer " + `String` (`UUID`)
+
+> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+
+Status Response: `20O Ok` si la suppression c'est bien passé
+
 ### `PUT /candidate/:candidateId/favorite`
 
 Description: Permet de changer le status de favoris du candidat
