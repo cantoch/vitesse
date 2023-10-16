@@ -53,12 +53,14 @@ Exemple:
 Body Response:
 
 - `token`: `String`
+- `isAdmin`: `Bool`
 
 Exemple:
 
 ```
 {
-    "token": "FfdfsdfdF9fdsf.fdsfdf98FDkzfdA3122.J83TqjxRzmuDuruBChNT8sMg5tfRi5iQ6tUlqJb3M9U"
+    "token": "FfdfsdfdF9fdsf.fdsfdf98FDkzfdA3122.J83TqjxRzmuDuruBChNT8sMg5tfRi5iQ6tUlqJb3M9U",
+    "isAdmin": false
 }
 ```
 

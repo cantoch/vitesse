@@ -57,11 +57,12 @@ final class UserController: RouteCollection {
         }
         
         let payload = UserPayload(email: findUser.email, isAdmin: findUser.isAdmin)
-        return TokenResponse(token: try req.jwt.sign(payload))
+        return TokenResponse(token: try req.jwt.sign(payload), isAdmin: findUser.isAdmin)
     }
 
 }
 
 struct TokenResponse: Content {
     let token: String
+    let isAdmin: Bool
 }
