@@ -124,7 +124,7 @@ Header:
 
 - `Authorization`: "Bearer " + `String` (`UUID`)
 
-> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+> Le token à fournir en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
 
 Exemple de réponse:
 
@@ -149,7 +149,7 @@ Header:
 
 - `Authorization`: "Bearer " + `String` (`UUID`)
 
-> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+> Le token à fournir en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
 
 Body Content Type: `application/json`
 Body Format :
@@ -186,7 +186,7 @@ Header:
 
 - `Authorization`: "Bearer " + `String` (`UUID`)
 
-> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+> Le token à fournir en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
 
 Body Content Type: `application/json`
 Body Format :
@@ -221,7 +221,7 @@ Header:
 
 - `Authorization`: "Bearer " + `String` (`UUID`)
 
-> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+> Le token à fournir en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
 
 Status Response: `20O Ok` si la suppression s'est bien passée
 
@@ -235,7 +235,7 @@ Header:
 
 - `Authorization`: "Bearer " + `String` (`UUID`)
 
-> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+> Le token à fournir en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
 
 Exemple de réponse:
 
