@@ -4,7 +4,7 @@
 
 Le back-end (de test) est développé en Swift via le framework service-side [Vapor](https://vapor.codes)
 
-Il vous faudra donc suivre [les étapes d'installation de Vapor](https://docs.vapor.codes/install/macos/) afin de pouvoir executer le backend
+Il vous faudra donc suivre [les étapes d'installation de Vapor](https://docs.vapor.codes/install/macos/) afin de pouvoir exécuter le backend
 
 ## Lancez le backend
 
@@ -20,7 +20,7 @@ swift run App --auto-migrate
 
 ## Compte Admin
 
-Par defaut, au lancement de l'application, un compte admin sera créer :
+Par défaut, au lancement de l'application, un compte admin sera créé :
 
 - email: `admin@vitesse.com`
 - mot de passe: `test123`
@@ -29,11 +29,11 @@ Par defaut, au lancement de l'application, un compte admin sera créer :
 
 ### `GET /`
 
-Description: Il s'agit d'une route pour verifier si l'API est lancé. Doit retourner "It works" si le serveur est correctement lancé
+Description: Il s'agit d'une route pour vérifier si l'API est lancée. Doit retourner "It works" si le serveur est correctement lancé.
 
 ### `POST /user/auth`
 
-Description: Permet de s'authentifier dans l'API et de généré un token pour utliser l'API
+Description: Permet de s'authentifier dans l'API et de générer un token pour utliser l'API
 
 Body Content Type: `application/json`
 Body Format :
@@ -87,7 +87,7 @@ Exemple:
 }
 ```
 
-Status Response: `201 Created` si la creation c'est bien passé
+Status Response: `201 Created` si la céeation s'est bien passée
 
 ### `GET /candidate`
 
@@ -97,7 +97,7 @@ Header:
 
 - `Authorization`: "Bearer " + `String` (`UUID`)
 
-> Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
+> Le token à fournir en header ici est le token obtenu dans l'appel à la route `POST /user/auth`
 
 Exemple de réponse:
 
@@ -178,9 +178,9 @@ Exemple de réponse:
 
 ### `PUT /candidate/:candidateId`
 
-Description: Permet de mettre à jour un candidat via son identifiant fournit dans l'URL (candidateId)
+Description: Permet de mettre à jour un candidat via son identifiant fourni dans l'URL (candidateId)
 
-> ⚠️ L'update sur le champ isFavorite n'est pas pris en compte par l'API car reservé aux Administrateur est uniquement faisable via la méthode `PUT /candidate/:candidateId/favorite`
+> ⚠️ L'update sur le champ isFavorite n'est pas pris en compte par l'API car reservé aux Administrateurs est uniquement faisable via la méthode `PUT /candidate/:candidateId/favorite`
 
 Header:
 
@@ -215,7 +215,7 @@ Exemple de réponse:
 
 ### `DELETE /candidate/:candidateId`
 
-Description: Permet de supprimer un candidate
+Description: Permet de supprimer un candidat
 
 Header:
 
@@ -223,13 +223,13 @@ Header:
 
 > Le token a fournit en header ici est le token obtenu dans l'appel a la route `POST /user/auth`
 
-Status Response: `20O Ok` si la suppression c'est bien passé
+Status Response: `20O Ok` si la suppression s'est bien passée
 
 ### `PUT /candidate/:candidateId/favorite`
 
 Description: Permet de changer le status de favoris du candidat
 
-> ⚠️ Cette méthode d'API n'est accessible qu'aux admin. Une erreur d'authorization vous sera indiqué si vous n'êtes pas identifié avec un compte administrateur.
+> ⚠️ Cette méthode d'API n'est accessible qu'aux admin. Une erreur d'authorisation vous sera indiquée si vous n'êtes pas identifié avec un compte administrateur.
 
 Header:
 
