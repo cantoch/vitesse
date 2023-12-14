@@ -2,9 +2,9 @@
 
 ## Installation
 
-Le back-end (de test) est développé en Swift via le framework service-side ![Vapor](https://vapor.codes)
+Le back-end (de test) est développé en Swift via le framework service-side [Vapor](https://vapor.codes)
 
-Il vous faudra donc suivre ![les étapes d'installation de Vapor](https://docs.vapor.codes/install/macos/) afin de pouvoir executer le backend
+Il vous faudra donc suivre [les étapes d'installation de Vapor](https://docs.vapor.codes/install/macos/) afin de pouvoir executer le backend
 
 ## Lancez le backend
 
