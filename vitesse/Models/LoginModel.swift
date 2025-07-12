@@ -13,6 +13,6 @@ struct LoginRequest: Encodable {
 }
 
 struct LoginResponse: Decodable {
-    let token: String
     let isAdmin: Bool
+    let token: String
 }

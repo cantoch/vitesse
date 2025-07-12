@@ -21,7 +21,7 @@ struct VitesseAPIService {
     
     //MARK: -Enumerations
     enum Path: String {
-        case login = "/auth"
+        case login = "/user/auth"
         case register = "/user/register"
         case candidate = "/candidate"
     }
@@ -39,20 +39,46 @@ struct VitesseAPIService {
         return url
     }
     
-    func serializeParameters(parameters: [String: Any]) throws -> Data? {
-        guard JSONSerialization.isValidJSONObject(parameters) else {
+    func serializeParameters(parameters: Encodable) throws -> Data {
+        let encoder = JSONEncoder()
+        guard let data = try? encoder.encode(parameters) else {
             throw APIError.invalidParameters
         }
-        return try JSONSerialization.data(withJSONObject: parameters)
+        return data
     }
     
-    func createRequest(path: Path, method: Method, parameters: Data?) throws -> URLRequest {
+    func createRequest(path: Path, method: Method, parameters: Encodable) throws -> URLRequest {
         var request = URLRequest(url: try createEndpoint(path: path))
         request.httpMethod = method.rawValue
-        if let parameters = parameters {
-            request.httpBody = parameters
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
+        request.httpBody = try serializeParameters(parameters: parameters)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         return request
     }
+    
+    func fetch(request: URLRequest) async throws -> Data {
+        let (data, response) = try await session.data(for: request)
+        
+        guard let response = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        print(response)
+        
+        guard (200...299).contains(response.statusCode) else {
+            throw APIError.invalidStatusCode
+        }
+        return data
+    }
+    
+    func decode<T: Decodable>(data: Data) throws -> T {
+        do {
+            let decoder = JSONDecoder()
+            let response = try decoder.decode(T.self, from: data)
+            return response
+        }
+        catch {
+            throw APIError.decodingError
+        }
+    }
 }
+

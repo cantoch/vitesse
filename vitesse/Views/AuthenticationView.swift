@@ -17,7 +17,7 @@ struct AuthenticationView: View {
                 .bold()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 20)
-                
+            
             
             Text("Email")
             TextField("Entrez votre email", text: $viewModel.email)
@@ -26,7 +26,12 @@ struct AuthenticationView: View {
             SecureField("Entrez votre mot de passe", text: $viewModel.password)
             
             Button(action: {
-                //action à inserer
+                Task {
+                    do {
+                        try await viewModel.login()
+                    } catch {
+                        print("error \(error)")
+                    }}
             }) {
                 Text("Sign in")
             }
