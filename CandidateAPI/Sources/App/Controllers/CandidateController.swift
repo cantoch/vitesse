@@ -39,6 +39,7 @@ final class CandidateController: RouteCollection {
     }
 
     func getAllCandidates(req: Request) throws -> EventLoopFuture<[Candidate]> {
+        print("📥 Requête GET /candidate bien reçue") // rajoutée tempo pour tester
         return Candidate.query(on: req.db).all()
     }
 

@@ -20,9 +20,12 @@ class AuthenticationViewModel: ObservableObject {
             path: .login,
             method: .post,
             parameters: loginData)
+        
         let data = try await apiService.fetch(request: request)
         let loginResponse: LoginResponse = try apiService.decode(
             data: data)
-        print(loginResponse)
+        
+        KeychainManager.shared.save(key: "Authtoken", value: loginResponse.token)
+        print(loginResponse.token)
     }
 }

@@ -18,7 +18,6 @@ struct AuthenticationView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 20)
             
-            
             Text("Email")
             TextField("Entrez votre email", text: $viewModel.email)
             
@@ -54,6 +53,7 @@ struct AuthenticationView: View {
         .textFieldStyle(RoundedBorderTextFieldStyle())
     }
 }
+
 #Preview {
     AuthenticationView()
 }

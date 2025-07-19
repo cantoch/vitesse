@@ -35,7 +35,7 @@ struct RegisterView: View {
             SecureField("", text: $viewModel.passwordConfirmation)
             
             Button(action: {
-                viewModel.register()
+//               Task avec la methode register à implementer
             }) {
                 Text("Create")
             }

@@ -11,7 +11,7 @@ import SwiftUI
 struct vitesseApp: App {
     var body: some Scene {
         WindowGroup {
-            AuthenticationView()
+            CandidateListView()
         }
     }
 }

@@ -16,7 +16,7 @@ class RegisterViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     @MainActor
-    func register() {
+    func register() async throws {
         let apiService = VitesseAPIService()
         let body = RegisterRequest(email: email, password: password, firstName: firstName, lastName: lastName)
         
@@ -30,10 +30,8 @@ class RegisterViewModel: ObservableObject {
             return
         }
         
-        _ = try? apiService.createRequest(path: .register, method: .post, parameters: try JSONEncoder().encode(body))
+        let request = try apiService.createRequest(path: .register, method: .post, parameters: body)
          
-        do {
-            
-        }
+        let data = try await apiService.fetch(request: request)
     }
 }
