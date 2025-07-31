@@ -1,14 +1,16 @@
 //
-//  CandidateListViewModel.swift
+//  CandidateListViewModel 2.swift
 //  Vitesse
 //
-//  Created by Renaud Leroy on 19/07/2025.
+//  Created by Renaud Leroy on 28/07/2025.
 //
+
 
 import Foundation
 
 
-class CandidateListViewModel: ObservableObject {
+class CandidateDetailViewModel: ObservableObject {
+    @Published var candidates: [Candidate] = []
     private let keychainManager: KeychainManager
     private let apiService: VitesseAPIService
     
@@ -20,20 +22,19 @@ class CandidateListViewModel: ObservableObject {
         self.apiService = apiService
     }
     
-    @Published var candidates: [Candidate] = []
-    
     @MainActor
-    func getAllCandidates() async throws {
-        guard let token = KeychainManager.shared.read(key: "AuthToken") else {
+    func favoriteCandidate(candidate: Candidate) async throws {
+        guard let token = KeychainManager.shared.read(key: "Authtoken") else {
             fatalError("No token found in keychain")
         }
+        
         do {
             let request = try apiService.createRequest(
-                path: .candidate,
-                method: .get,
+                path: .favorite(candidate.id),
+                method: .post,
                 token: token)
             let (data, _) = try await apiService.fetch(request: request)
-            let decodedData : [Candidate] = try JSONDecoder().decode([Candidate].self, from: data)
+            let decodedData = try JSONDecoder().decode([Candidate].self, from: data)
             self.candidates = decodedData
         }
         catch {
@@ -41,5 +42,3 @@ class CandidateListViewModel: ObservableObject {
         }
     }
 }
-
-

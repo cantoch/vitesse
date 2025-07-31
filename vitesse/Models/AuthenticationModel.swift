@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct LoginRequest: Encodable {
+struct AuthRequest: Encodable {
     let email: String
     let password: String
 }
 
-struct LoginResponse: Decodable {
+struct AuthResponse: Decodable {
     let isAdmin: Bool
     let token: String
 }

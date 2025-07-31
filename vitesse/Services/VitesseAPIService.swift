@@ -1,4 +1,3 @@
-//
 //  VitesseAPIService.swift
 //  Vitesse
 //
@@ -20,15 +19,40 @@ struct VitesseAPIService {
     }
     
     //MARK: -Enumerations
-    enum Path: String {
-        case login = "/user/auth"
-        case register = "/user/register"
-        case candidate = "/candidate"
+    enum Path {
+        case login
+        case register
+        case candidate
+        case favorite(UUID)
+        case update(UUID)
+        
+        var rawValue: String {
+            switch self {
+            case .login:
+                return "/user/auth"
+            case .register:
+                return "/user/register"
+            case .candidate:
+                return "/candidate"
+            case .favorite(let id):
+                return "/candidate/\(id)/favorite"
+            case .update(let id):
+                return "/candidate/\(id)"
+            }
+        }
     }
+//    enum Path: String {
+//        case login = "/user/auth"
+//        case register = "/user/register"
+//        case candidate = "/candidate"
+//        
+//    }
     
     enum Method: String {
         case get = "GET"
         case post = "POST"
+        case put = "PUT"
+        case delete = "DELETE"
     }
     
     //MARK: -Methods
@@ -47,27 +71,30 @@ struct VitesseAPIService {
         return data
     }
     
-    func createRequest(path: Path, method: Method, parameters: Encodable) throws -> URLRequest {
+    func createRequest(path: Path, method: Method, parameters: Encodable? = nil, token: String? = nil) throws -> URLRequest {
         var request = URLRequest(url: try createEndpoint(path: path))
         request.httpMethod = method.rawValue
-        request.httpBody = try serializeParameters(parameters: parameters)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let parameters = parameters {
+            request.httpBody = try serializeParameters(parameters: parameters)
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+        if let token = token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         return request
     }
     
-    func fetch(request: URLRequest) async throws -> Data {
+    func fetch(request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         let (data, response) = try await session.data(for: request)
         
         guard let response = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
         
-        print(response)
-        
         guard (200...299).contains(response.statusCode) else {
             throw APIError.invalidStatusCode
         }
-        return data
+        return (data, response)
     }
     
     func decode<T: Decodable>(data: Data) throws -> T {
@@ -81,4 +108,3 @@ struct VitesseAPIService {
         }
     }
 }
-

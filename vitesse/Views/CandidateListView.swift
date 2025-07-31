@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CandidateListView: View {
-    
     @State var searchText: String = ""
     @State var showFavorites: Bool = false
     
@@ -46,6 +45,14 @@ struct CandidateListView: View {
                     Button(action: {
                         showFavorites.toggle()
                     }) {Image(systemName: showFavorites ? "star.fill" : "star")}
+                }
+            }
+            .task {
+                do {
+                    try await viewModel.getAllCandidates()
+                }
+                catch {
+                    print("Error fetching candidates: \(error)")
                 }
             }
         }

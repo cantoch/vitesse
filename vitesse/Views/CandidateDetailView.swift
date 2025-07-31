@@ -8,14 +8,38 @@
 import SwiftUI
 
 struct CandidateDetailView: View {
+    @State var isFavorite: Bool
+    @State var isAdmin: Bool = false
+    @State var goEdit: Bool = false
+    
+    @ObservedObject var viewModel = CandidateDetailViewModel()
+    
     let candidate: Candidate
+    
+    init(candidate: Candidate) {
+        _isFavorite = .init(initialValue: candidate.isFavorite)
+        self.candidate = candidate
+    }
     
     var body: some View {
         VStack {
             HStack {
                 Text("\(candidate.firstName) \(candidate.lastName)")
                 Spacer()
-                Image(systemName: candidate.isFavorite ? "star.fill" : "star")
+                Button {
+                    Task {
+                        if let isAdminValue = KeychainManager.shared.read(key: "AuthStatus") {
+                            isAdmin = (isAdminValue == "true")
+                        }
+                        
+                        if isAdmin {
+                            try? await viewModel.favoriteCandidate(candidate: candidate)
+                            isFavorite.toggle()
+                        }
+                    }
+                } label: {
+                    Image(systemName: isFavorite ? "star.fill" : "star")
+                }
             }
             .font(.title)
             .fontWeight(.bold)
@@ -60,7 +84,10 @@ struct CandidateDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Edit") {
-                    // action
+                    goEdit = true
+                }
+                .navigationDestination(isPresented: $goEdit) {
+                    CandidateUpdateView(viewModel: CandidateUpdateViewModel(candidate: candidate))
                 }
             }
         }
@@ -68,10 +95,5 @@ struct CandidateDetailView: View {
     }
 }
 
-#Preview {
-    let viewModel = CandidateListViewModel()
-    let candidate = viewModel.candidates[0]
-    CandidateDetailView(candidate: candidate)
-}
 
 

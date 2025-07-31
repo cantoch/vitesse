@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Candidate: Identifiable {
-    let phone: Int
+struct Candidate: Encodable, Decodable, Identifiable {
+    let phone: String
     let note: String
     let id: UUID
     let firstName: String
@@ -16,4 +16,13 @@ struct Candidate: Identifiable {
     let isFavorite: Bool
     let email: String
     let lastName: String
+}
+
+struct CandidateUpdateRequest: Encodable {
+    let email: String
+    let note: String?
+    let linkedinURL: String?
+    let firstName: String
+    let lastName: String
+    let phone: String
 }

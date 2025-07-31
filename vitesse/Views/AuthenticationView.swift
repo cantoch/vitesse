@@ -8,49 +8,63 @@
 import SwiftUI
 
 struct AuthenticationView: View {
-    @StateObject var viewModel = AuthenticationViewModel()
+    @ObservedObject var viewModel = AuthenticationViewModel()
+    @State private var showRegistration = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        NavigationStack {
             Text("Login")
-                .font(.largeTitle)
+                .font(.system(size: 50))
                 .bold()
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.bottom, 20)
-            
-            Text("Email")
-            TextField("Entrez votre email", text: $viewModel.email)
-            
-            Text("Password")
-            SecureField("Entrez votre mot de passe", text: $viewModel.password)
-            
-            Button(action: {
-                Task {
-                    do {
-                        try await viewModel.login()
-                    } catch {
-                        print("error \(error)")
-                    }}
-            }) {
-                Text("Sign in")
+                .padding(.bottom, 40)
+            VStack(alignment: .leading, spacing: 20) {
+                
+                Text("Email/Username")
+                TextField("Entrez votre email", text: $viewModel.email)
+                    .textInputAutocapitalization(.never)
+                Text("Password")
+                SecureField("Entrez votre mot de passe", text: $viewModel.password)
+                Text("Forgot password?")
+                    .font(.caption)
             }
-            .font(.title3)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(20)
-            .padding(.top, 30)
-            
-            Button(action: {
-                //action à inserer
-            }) {
-                Text("Register")
+            .padding(EdgeInsets(top: 10, leading: 60, bottom: 30, trailing: 60))
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            VStack {
+                Button("Sign in")
+                {
+                    Task {
+                        try? await viewModel.login()
+                    }
+                }
+                
+                .font(.title3)
+                .foregroundStyle(.white)
+                .frame(maxWidth: 120,maxHeight: 40)
+                .border(Color.black, width: 3)
+                .navigationDestination(isPresented: $viewModel.isLoggedIn) {
+                    CandidateListView()
+                }
+                .background(Color.black)
+                .cornerRadius(40)
+                Spacer()
+                Button("Register") {
+                    showRegistration = true
+                }
+                .navigationDestination(isPresented: $showRegistration) {
+                    RegistrationView {
+                        showRegistration = false
+                    }
+                }
+                .font(.title3)
+                .foregroundStyle(.white)
+                .frame(maxWidth: 120,maxHeight: 40)
+                .border(Color.black, width: 3)
+                .background(Color.black)
+                .cornerRadius(40)
             }
-            .font(.title3)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(20)
+            .frame(maxWidth: .infinity, maxHeight: 100)
         }
-        .padding(50)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .textFieldStyle(RoundedBorderTextFieldStyle())
     }
 }
 

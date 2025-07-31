@@ -65,6 +65,11 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		9A5F4FAE2E313B1600AAA8C6 /* Protocols */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +100,7 @@
 		9A23A4002E1FF7C400D744D0 = {
 			isa = PBXGroup;
 			children = (
+				9A5F4FAE2E313B1600AAA8C6 /* Protocols */,
 				9A23A4332E1FF81000D744D0 /* Models */,
 				9A23A4342E1FF81B00D744D0 /* Views */,
 				9A23A4462E2007D900D744D0 /* ViewModels */,
@@ -137,6 +143,7 @@
 				9A23A4342E1FF81B00D744D0 /* Views */,
 				9A23A4462E2007D900D744D0 /* ViewModels */,
 				9A23A4A62E21367200D744D0 /* Services */,
+				9A5F4FAE2E313B1600AAA8C6 /* Protocols */,
 			);
 			name = Vitesse;
 			packageProductDependencies = (

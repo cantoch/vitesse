@@ -22,24 +22,23 @@ final class CandidateController: RouteCollection {
 
         protectedRoutes.post(use: createCandidate)
             .description("Create a new candidate")
-            
-        
+
+
         protectedRoutes.get(":candidateID", use: getCandidate)
             .description("Get a specific candidate by ID")
-     
-        
+
+
         protectedRoutes.put(":candidateID", use: updateCandidate)
             .description("Update a candidate by ID")
-        
+
         protectedRoutes.delete(":candidateID", use: removeCandidate)
             .description("Remove a candidate by ID")
-        
+
         protectedRoutes.post(":candidateID", "favorite", use: favoriteCandidate)
             .description("Mark a candidate as favorite (Admin only)")
     }
 
     func getAllCandidates(req: Request) throws -> EventLoopFuture<[Candidate]> {
-        print("📥 Requête GET /candidate bien reçue") // rajoutée tempo pour tester
         return Candidate.query(on: req.db).all()
     }
 
@@ -65,12 +64,12 @@ final class CandidateController: RouteCollection {
                 return candidate.save(on: req.db).map { candidate }
             }
     }
-    
+
     func removeCandidate(req: Request) async throws -> HTTPStatus {
         guard let candidate = try await Candidate.find(req.parameters.get("candidateID"), on: req.db) else {
             throw Abort(.notFound)
         }
-            
+
         try await candidate.delete(on: req.db)
         return .ok
     }
@@ -80,7 +79,7 @@ final class CandidateController: RouteCollection {
         guard user.isAdmin else {
             throw Abort(.forbidden)
         }
-        
+
         return Candidate.find(req.parameters.get("candidateID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { candidate in
@@ -107,3 +106,4 @@ extension Candidate {
         self.init(firstName: req.firstName, lastName: req.lastName, email: req.email, phone: req.phone, linkedinURL: req.linkedinURL, note: req.note)
     }
 }
+
