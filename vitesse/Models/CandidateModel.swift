@@ -18,7 +18,7 @@ struct Candidate: Encodable, Decodable, Identifiable {
     let lastName: String
 }
 
-struct CandidateUpdateRequest: Encodable {
+struct CandidateRequest: Encodable {
     let email: String
     let note: String?
     let linkedinURL: String?

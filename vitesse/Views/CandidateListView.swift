@@ -13,11 +13,12 @@ struct CandidateListView: View {
     
     @ObservedObject var viewModel = CandidateListViewModel()
     
-    var body: some View {
-        
-        let filteredCandidates = viewModel.candidates.filter { (searchText.isEmpty || $0.lastName.localizedStandardContains(searchText) || $0.firstName.localizedStandardContains(searchText)) && (!showFavorites || $0.isFavorite)
+    private var filteredCandidates: [Candidate] {
+        viewModel.candidates.filter { (searchText.isEmpty || $0.lastName.localizedStandardContains(searchText) || $0.firstName.localizedStandardContains(searchText)) && (!showFavorites || $0.isFavorite)
         }
-        
+    }
+    
+    var body: some View {
         NavigationView {
             VStack {
                 List {
@@ -30,12 +31,17 @@ struct CandidateListView: View {
                             }
                         }
                     }
+                    .onDelete { indices in
+                        Task {
+                            await viewModel.deleteCandidate(at: indices)
+                        }
+                    }
                 }
             }
             .searchable(text: $searchText)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Edit")
+                    EditButton()
                 }
                 ToolbarItem(placement: .principal) {
                     Text("Candidats")
@@ -59,7 +65,3 @@ struct CandidateListView: View {
     }
 }
 
-
-#Preview {
-    CandidateListView()
-}

@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct CandidateUpdateView: View {
-    
-    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: CandidateUpdateViewModel
     @State var showCandidateUpdateSuccess: Bool = false
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {

@@ -9,6 +9,7 @@ import Foundation
 
 
 class CandidateListViewModel: ObservableObject {
+    @Published var candidates: [Candidate] = []
     private let keychainManager: KeychainManager
     private let apiService: VitesseAPIService
     
@@ -19,9 +20,7 @@ class CandidateListViewModel: ObservableObject {
         self.keychainManager = keychainManager
         self.apiService = apiService
     }
-    
-    @Published var candidates: [Candidate] = []
-    
+
     @MainActor
     func getAllCandidates() async throws {
         guard let token = KeychainManager.shared.read(key: "AuthToken") else {
@@ -38,6 +37,39 @@ class CandidateListViewModel: ObservableObject {
         }
         catch {
             print("Error fetching candidates: \(error)")
+        }
+    }
+    
+    func deleteCandidateFromServer(candidate: Candidate) async throws {
+        guard let token = KeychainManager.shared.read(key: "AuthToken") else {
+            fatalError("No token found in keychain")
+        }
+        do {
+            let request = try apiService.createRequest(
+                path: .delete(candidate.id),
+                method: .delete,
+                token: token)
+            let (_, response) = try await apiService.fetch(request: request)
+            guard response.statusCode == 200 else {
+                return
+            }
+        }
+        catch {
+            print("Error fetching candidates: \(error)")
+        }
+    }
+   
+    @MainActor
+    func deleteCandidate(at offsets: IndexSet) async {
+        let candidatesToDelete = offsets.map { self.candidates[$0] }
+        for candidate in candidatesToDelete {
+            do {
+                try await deleteCandidateFromServer(candidate: candidate)
+                self.candidates.removeAll(where: { $0.id == candidate.id })
+            }
+            catch {
+                print("Error deleting candidate: \(error)")
+            }
         }
     }
 }

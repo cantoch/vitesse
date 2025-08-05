@@ -64,6 +64,10 @@ struct AuthenticationView: View {
                 .cornerRadius(40)
             }
             .frame(maxWidth: .infinity, maxHeight: 100)
+            .contentShape(Rectangle())
+//            onTapGesture {
+//                endEditing()
+//            }
         }
     }
 }

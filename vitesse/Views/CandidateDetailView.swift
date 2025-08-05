@@ -95,5 +95,17 @@ struct CandidateDetailView: View {
     }
 }
 
+#Preview {
+    CandidateDetailView(candidate: Candidate(
+        phone: "1234567890",
+        note: "Excellent communication skills.",
+        id: UUID(),
+        firstName: "John",
+        linkedinURL: "https://linkedin.com/in/johndoe",
+        isFavorite: true,
+        email: "john.doe@example.com",
+        lastName: "Doe"
+    ))
+}
 
 

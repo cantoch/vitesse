@@ -1,13 +1,13 @@
 //
-//  CandidateUpdateViewModel.swift
+//  CandidateCreationViewModel.swift
 //  Vitesse
 //
-//  Created by Renaud Leroy on 31/07/2025.
+//  Created by Renaud Leroy on 05/08/2025.
 //
 
 import Foundation
 
-class CandidateUpdateViewModel: ObservableObject {
+class CandidateCreationViewModel {
     @Published var candidate: Candidate?
     @Published var email: String = ""
     @Published var note: String = ""
@@ -32,20 +32,20 @@ class CandidateUpdateViewModel: ObservableObject {
     }
     
     @MainActor
-    func updateCandidate(candidate: Candidate) async throws {
+    func addCandidate() async throws {
         guard let token = keychainManager.read(key: "Authtoken") else {
             fatalError("No token found in keychain")
         }
         do {
             let body = CandidateRequest(email: email, note: note, linkedinURL: linkedinURL, firstName: firstName, lastName: lastName, phone: phone)
             let request = try apiService.createRequest(
-                path: .update(candidate.id),
-                method: .put,
+                path: .candidate,
+                method: .post,
                 parameters: body,
                 token: token)
             let (data, _) = try await apiService.fetch(request: request)
-            let updatedCandidate = try JSONDecoder().decode(Candidate.self, from: data)
-            self.candidate = updatedCandidate
+            let newCandidate = try JSONDecoder().decode(Candidate.self, from: data)
+            self.candidate = newCandidate
         }
     }
 }

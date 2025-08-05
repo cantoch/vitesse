@@ -25,6 +25,7 @@ struct VitesseAPIService {
         case candidate
         case favorite(UUID)
         case update(UUID)
+        case delete(UUID)
         
         var rawValue: String {
             switch self {
@@ -37,6 +38,8 @@ struct VitesseAPIService {
             case .favorite(let id):
                 return "/candidate/\(id)/favorite"
             case .update(let id):
+                return "/candidate/\(id)"
+            case .delete(let id):
                 return "/candidate/\(id)"
             }
         }

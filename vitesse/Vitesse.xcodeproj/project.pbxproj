@@ -29,6 +29,17 @@
 		9A23A4202E1FF7C600D744D0 /* VitesseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitesseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9AD7C4302E414920003EF579 /* Exceptions for "vitesse" folder in "Vitesse" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ContentView.swift,
+				vitesseApp.swift,
+			);
+			target = 9A23A4082E1FF7C400D744D0 /* Vitesse */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9A23A40B2E1FF7C400D744D0 /* vitesse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -65,9 +76,17 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		9A5F4FAE2E313B1600AAA8C6 /* Protocols */ = {
+		9A5F4FAE2E313B1600AAA8C6 /* Utils */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Protocols;
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		9AD7C3A02E402FE1003EF579 /* vitesse */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9AD7C4302E414920003EF579 /* Exceptions for "vitesse" folder in "Vitesse" target */,
+			);
+			path = vitesse;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -100,7 +119,8 @@
 		9A23A4002E1FF7C400D744D0 = {
 			isa = PBXGroup;
 			children = (
-				9A5F4FAE2E313B1600AAA8C6 /* Protocols */,
+				9AD7C3A02E402FE1003EF579 /* vitesse */,
+				9A5F4FAE2E313B1600AAA8C6 /* Utils */,
 				9A23A4332E1FF81000D744D0 /* Models */,
 				9A23A4342E1FF81B00D744D0 /* Views */,
 				9A23A4462E2007D900D744D0 /* ViewModels */,
@@ -131,7 +151,6 @@
 			buildPhases = (
 				9A23A4052E1FF7C400D744D0 /* Sources */,
 				9A23A4062E1FF7C400D744D0 /* Frameworks */,
-				9A23A4072E1FF7C400D744D0 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -143,7 +162,8 @@
 				9A23A4342E1FF81B00D744D0 /* Views */,
 				9A23A4462E2007D900D744D0 /* ViewModels */,
 				9A23A4A62E21367200D744D0 /* Services */,
-				9A5F4FAE2E313B1600AAA8C6 /* Protocols */,
+				9A5F4FAE2E313B1600AAA8C6 /* Utils */,
+				9AD7C3A02E402FE1003EF579 /* vitesse */,
 			);
 			name = Vitesse;
 			packageProductDependencies = (
@@ -243,13 +263,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9A23A4072E1FF7C400D744D0 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9A23A4142E1FF7C600D744D0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -357,6 +370,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "Vitesse/Info.plist\n";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -415,6 +429,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "Vitesse/Info.plist\n";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -435,6 +450,7 @@
 				DEVELOPMENT_TEAM = HZAZV43ASV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -463,6 +479,7 @@
 				DEVELOPMENT_TEAM = HZAZV43ASV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
