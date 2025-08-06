@@ -7,8 +7,7 @@
 
 import Foundation
 
-class CandidateCreationViewModel {
-    @Published var candidate: Candidate?
+class CandidateCreationViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var note: String = ""
     @Published var linkedinURL: String = ""
@@ -19,10 +18,9 @@ class CandidateCreationViewModel {
     private let keychainManager: KeychainManager
     private let apiService: VitesseAPIService
     
-    init(candidate: Candidate, keychainManager: KeychainManager = .shared, apiService: VitesseAPIService = VitesseAPIService()) {
+    init(candidate: CandidateRequest, keychainManager: KeychainManager = .shared, apiService: VitesseAPIService = VitesseAPIService()) {
         self.keychainManager = keychainManager
         self.apiService = apiService
-        self.candidate = candidate
         self.email = candidate.email
         self.note = candidate.note
         self.linkedinURL = candidate.linkedinURL
@@ -44,8 +42,7 @@ class CandidateCreationViewModel {
                 parameters: body,
                 token: token)
             let (data, _) = try await apiService.fetch(request: request)
-            let newCandidate = try JSONDecoder().decode(Candidate.self, from: data)
-            self.candidate = newCandidate
+            _ = try JSONDecoder().decode(Candidate.self, from: data)
         }
     }
 }

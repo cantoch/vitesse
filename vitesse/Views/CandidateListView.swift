@@ -10,6 +10,7 @@ import SwiftUI
 struct CandidateListView: View {
     @State var searchText: String = ""
     @State var showFavorites: Bool = false
+    @State var goCreationCandidate: Bool = false
     
     @ObservedObject var viewModel = CandidateListViewModel()
     
@@ -52,6 +53,11 @@ struct CandidateListView: View {
                         showFavorites.toggle()
                     }) {Image(systemName: showFavorites ? "star.fill" : "star")}
                 }
+                ToolbarItem(placement: .bottomBar) {
+                    Button("Ajouter un candidat") {
+                        goCreationCandidate.toggle()
+                    }
+                }
             }
             .task {
                 do {
@@ -60,6 +66,30 @@ struct CandidateListView: View {
                 catch {
                     print("Error fetching candidates: \(error)")
                 }
+            }
+            .sheet(
+                isPresented: $goCreationCandidate,
+                onDismiss: {
+                    Task {
+                        try await viewModel.getAllCandidates()
+                    }
+                }
+            ) {
+                let emptyRequest = CandidateRequest(
+                    email: "",
+                    note: "",
+                    linkedinURL: "",
+                    firstName: "",
+                    lastName: "",
+                    phone: ""
+                )
+                CandidateCreationView(
+                    viewModel: CandidateCreationViewModel(
+                        candidate: emptyRequest,
+                        keychainManager: KeychainManager.shared,
+                        apiService: VitesseAPIService()
+                    )
+                )
             }
         }
     }

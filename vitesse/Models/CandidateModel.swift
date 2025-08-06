@@ -20,8 +20,8 @@ struct Candidate: Encodable, Decodable, Identifiable {
 
 struct CandidateRequest: Encodable {
     let email: String
-    let note: String?
-    let linkedinURL: String?
+    let note: String
+    let linkedinURL: String
     let firstName: String
     let lastName: String
     let phone: String
