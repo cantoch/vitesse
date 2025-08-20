@@ -71,7 +71,11 @@ struct CandidateListView: View {
                 isPresented: $goCreationCandidate,
                 onDismiss: {
                     Task {
-                        try await viewModel.getAllCandidates()
+                        do {
+                            try await viewModel.getAllCandidates()
+                        } catch {
+                            print("Error fetching candidates: \(error)")
+                        }
                     }
                 }
             ) {
@@ -87,11 +91,10 @@ struct CandidateListView: View {
                     viewModel: CandidateCreationViewModel(
                         candidate: emptyRequest,
                         keychainManager: KeychainManager.shared,
-                        apiService: VitesseAPIService()
+                        api: DefaultAPIClient()
                     )
                 )
             }
         }
     }
 }
-

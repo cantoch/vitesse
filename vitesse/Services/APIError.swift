@@ -7,11 +7,12 @@
 
 import Foundation
 
-enum APIError: Error {
+enum APIError: Error, Equatable {
     case invalidURL
     case invalidParameters
     case invalidData
     case invalidResponse
-    case invalidStatusCode
+    case invalidStatusCode(HTTPURLResponse)
+    case serverError(HTTPURLResponse)
     case decodingError
 }

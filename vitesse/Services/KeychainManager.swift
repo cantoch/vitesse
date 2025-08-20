@@ -8,6 +8,33 @@
 import Foundation
 import Security
 
+protocol KeychainManagerProtocol {
+    func save(key: String, value: String)
+    func read(key: String) -> String?
+    func delete(key: String)
+}
+
+// MARK: - KeychainError
+
+enum KeychainError: Error {
+    case itemNotFound
+    case duplicateItem
+    case unexpectedStatus(OSStatus)
+    case unexpectedData
+    
+    var errorKeychainDescription: String? {
+        switch self {
+        case .itemNotFound:
+            return "Item was not found"
+        case .duplicateItem:
+            return "Item already exists"
+        case .unexpectedStatus(let OSStatus):
+            return "Unexpected status: \(OSStatus)"
+        case .unexpectedData:
+            return "Unexpected data received"
+        }
+    }
+}
 
 class KeychainManager {
     static let shared = KeychainManager()

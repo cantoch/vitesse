@@ -17,11 +17,13 @@ class CandidateUpdateViewModel: ObservableObject {
     @Published var phone: String = ""
     
     private let keychainManager: KeychainManager
-    private let apiService: VitesseAPIService
+    private let api: APIClient
     
-    init(candidate: Candidate, keychainManager: KeychainManager = .shared, apiService: VitesseAPIService = VitesseAPIService()) {
+    init(candidate: Candidate,
+         keychainManager: KeychainManager = .shared,
+         api: APIClient = DefaultAPIClient()) {
         self.keychainManager = keychainManager
-        self.apiService = apiService
+        self.api = api
         self.candidate = candidate
         self.email = candidate.email
         self.note = candidate.note
@@ -33,18 +35,26 @@ class CandidateUpdateViewModel: ObservableObject {
     
     @MainActor
     func updateCandidate(candidate: Candidate) async throws {
-        guard let token = keychainManager.read(key: "Authtoken") else {
+        guard let token = keychainManager.read(key: "AuthToken") else {
             fatalError("No token found in keychain")
         }
         do {
-            let body = CandidateRequest(email: email, note: note, linkedinURL: linkedinURL, firstName: firstName, lastName: lastName, phone: phone)
-            let request = try apiService.createRequest(
+            let body = CandidateRequest(
+                email: email,
+                note: note,
+                linkedinURL: linkedinURL,
+                firstName: firstName,
+                lastName: lastName,
+                phone: phone
+            )
+            let request = try api.createRequest(
                 path: .update(candidate.id),
                 method: .put,
                 parameters: body,
-                token: token)
-            let (data, _) = try await apiService.fetch(request: request)
-            let updatedCandidate = try JSONDecoder().decode(Candidate.self, from: data)
+                token: token
+            )
+            let (data, _) = try await api.fetch(request: request)
+            let updatedCandidate: Candidate = try api.decode(data: data)
             self.candidate = updatedCandidate
         }
     }

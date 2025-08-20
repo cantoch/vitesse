@@ -16,7 +16,11 @@ class RegistrationViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isRegistered: Bool = false
     
-    let apiService = VitesseAPIService()
+    private let api: APIClient
+    
+    init(api: APIClient = DefaultAPIClient()) {
+        self.api = api
+    }
     
     @MainActor
     func register() async throws {
@@ -31,8 +35,12 @@ class RegistrationViewModel: ObservableObject {
             errorMessage = "Les 2 mots de passe ne sont pas identiques"
             return
         }
-        let request = try apiService.createRequest(path: .register, method: .post, parameters: body)
-        let (_, response) = try await apiService.fetch(request: request)
+        let request = try api.createRequest(path: .register,
+                                            method: .post,
+                                            parameters: body,
+                                            token: nil
+        )
+        let (_, response) = try await api.fetch(request: request)
         guard response.statusCode == 201 else {
             errorMessage = "Une erreur est survenue, veuillez réessayer plus tard"
             return

@@ -11,28 +11,28 @@ import Foundation
 class CandidateListViewModel: ObservableObject {
     @Published var candidates: [Candidate] = []
     private let keychainManager: KeychainManager
-    private let apiService: VitesseAPIService
+    private let api: APIClient
     
     init(
         keychainManager: KeychainManager = .shared,
-        apiService: VitesseAPIService = VitesseAPIService()
-    ) {
-        self.keychainManager = keychainManager
-        self.apiService = apiService
-    }
-
+        api: APIClient = DefaultAPIClient()) {
+            self.keychainManager = keychainManager
+            self.api = api
+        }
+    
     @MainActor
     func getAllCandidates() async throws {
         guard let token = KeychainManager.shared.read(key: "AuthToken") else {
             fatalError("No token found in keychain")
         }
         do {
-            let request = try apiService.createRequest(
+            let request = try api.createRequest(
                 path: .candidate,
                 method: .get,
+                parameters: nil,
                 token: token)
-            let (data, _) = try await apiService.fetch(request: request)
-            let decodedData : [Candidate] = try JSONDecoder().decode([Candidate].self, from: data)
+            let (data, _) = try await api.fetch(request: request)
+            let decodedData : [Candidate] = try api.decode(data: data)
             self.candidates = decodedData
         }
         catch {
@@ -40,16 +40,18 @@ class CandidateListViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func deleteCandidateFromServer(candidate: Candidate) async throws {
         guard let token = KeychainManager.shared.read(key: "AuthToken") else {
             fatalError("No token found in keychain")
         }
         do {
-            let request = try apiService.createRequest(
+            let request = try api.createRequest(
                 path: .delete(candidate.id),
                 method: .delete,
+                parameters: nil,
                 token: token)
-            let (_, response) = try await apiService.fetch(request: request)
+            let (_, response) = try await api.fetch(request: request)
             guard response.statusCode == 200 else {
                 return
             }
@@ -58,7 +60,7 @@ class CandidateListViewModel: ObservableObject {
             print("Error fetching candidates: \(error)")
         }
     }
-   
+    
     @MainActor
     func deleteCandidate(at offsets: IndexSet) async {
         let candidatesToDelete = offsets.map { self.candidates[$0] }

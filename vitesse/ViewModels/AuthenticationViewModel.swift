@@ -13,21 +13,28 @@ class AuthenticationViewModel: ObservableObject {
     @Published var error: String?
     @Published var isLoggedIn: Bool = false
     
-    let apiService = VitesseAPIService()
+    private let api: APIClient
+    
+    init(api: APIClient = DefaultAPIClient()) {
+        self.api = api
+    }
     
     @MainActor
     func login() async throws {
         let loginData = AuthRequest(email: email, password: password)
-        let request = try apiService.createRequest(
+        let request = try api.createRequest(
             path: .login,
             method: .post,
-            parameters: loginData)
+            parameters: loginData,
+            token: nil
+        )
         
-        let (data, _) = try await apiService.fetch(request: request)
-        let response: AuthResponse = try apiService.decode(data: data)
+        let (data, _) = try await api.fetch(request: request)
+        let response: AuthResponse = try api.decode(data: data)
         
         KeychainManager.shared.save(key: "AuthStatus", value: String(response.isAdmin))
         KeychainManager.shared.save(key: "AuthToken", value: response.token)
         isLoggedIn = true
     }
 }
+
