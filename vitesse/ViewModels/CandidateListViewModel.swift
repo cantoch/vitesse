@@ -10,19 +10,18 @@ import Foundation
 
 class CandidateListViewModel: ObservableObject {
     @Published var candidates: [Candidate] = []
-    private let keychainManager: KeychainManager
+   
     private let api: APIClient
+    private let keychain: KeychainManagerProtocol
     
-    init(
-        keychainManager: KeychainManager = .shared,
-        api: APIClient = DefaultAPIClient()) {
-            self.keychainManager = keychainManager
-            self.api = api
-        }
+    init(api: APIClient = DefaultAPIClient(), keychain: KeychainManagerProtocol = KeychainManager.shared) {
+        self.api = api
+        self.keychain = keychain
+    }
     
     @MainActor
     func getAllCandidates() async throws {
-        guard let token = KeychainManager.shared.read(key: "AuthToken") else {
+        guard let token = keychain.read(key: "AuthToken") else {
             fatalError("No token found in keychain")
         }
         do {

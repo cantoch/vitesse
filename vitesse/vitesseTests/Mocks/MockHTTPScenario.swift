@@ -14,6 +14,8 @@ enum MockHTTPScenario {
     case statusCodeError
     case networkError
     case emptyData
+    case invalidURL
+    case candidatesSuccess
 }
 
 struct MockResponseProvider {
@@ -24,12 +26,11 @@ struct MockResponseProvider {
                                            statusCode: 204,
                                            httpVersion: nil,
                                            headerFields: nil)!
-            let data = Data()
             
             MockURLProtocol.requestHandler = { request in
-                return (response, data, nil)
+                return (response, nil, nil)
             }
-            return (response, data, nil)
+            return (response, nil, nil)
             
         case .successWithBody:
             let response = HTTPURLResponse(url: URL(string: "http://127.0.0.1:8080")!,
@@ -46,7 +47,6 @@ struct MockResponseProvider {
                 return (response, data, nil)
             }
             return (response, data, nil)
-            
             
         case .serverError:
             let response = HTTPURLResponse(url: URL(string: "http://127.0.0.1:8080")!,
@@ -75,7 +75,6 @@ struct MockResponseProvider {
             }
             return (response, Data(), nil)
             
-            
         case .networkError:
             let error = URLError(.notConnectedToInternet)
             MockURLProtocol.requestHandler = { request in
@@ -86,13 +85,45 @@ struct MockResponseProvider {
             
         case .emptyData:
             let response = HTTPURLResponse(url: URL(string: "http://127.0.0.1:8080")!,
-                                           statusCode: 200,
+                                           statusCode: 204,
                                            httpVersion: nil,
                                            headerFields: nil)!
             MockURLProtocol.requestHandler = { request in
-                return (response, Data(), nil)
+                return (response, nil, nil)
             }
-            return (response, Data(), nil)
+            return (response, nil, nil)
+            
+        case .invalidURL:
+            let error = URLError(.badURL)
+            MockURLProtocol.requestHandler = { request in
+                return (nil, nil, error)
+            }
+            return (nil, nil, error)
+            
+        case .candidatesSuccess:
+            let response = HTTPURLResponse(url: URL(string: "http://127.0.0.1:8080")!,
+                                           statusCode: 200,
+                                           httpVersion: nil,
+                                           headerFields: ["Content-Type": "application/json"])!
+            let data = """
+                       [
+                           {
+                               "phone": "123456789",
+                               "note": "Test note 1",
+                               "id": "550e8400-e29b-41d4-a716-446655440000",
+                               "firstName": "John",
+                               "linkedinURL": "https://linkedin.com/john",
+                               "isFavorite": false,
+                               "email": "john@test.com",
+                               "lastName": "Doe"
+                           }
+                       ]
+                       """.data(using: .utf8)!
+                       
+                       MockURLProtocol.requestHandler = { request in
+                           return (response, data, nil)
+                       }
+                       return (response, data, nil)
         }
     }
 }

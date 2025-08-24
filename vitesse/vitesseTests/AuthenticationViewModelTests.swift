@@ -10,43 +10,26 @@ import XCTest
 
 final class AuthenticationViewModelTests: XCTestCase {
     var viewModel: AuthenticationViewModel!
-    var api: MockAPIClient!
-    var keychain: MockKeychainManager!
+    var mockApi: MockAPIClient!
+    var mockKeychain: MockKeychainManager!
     
     override func setUpWithError() throws {
-        keychain = MockKeychainManager()
-        viewModel = AuthenticationViewModel()
+        mockKeychain = MockKeychainManager()
     }
     
     override func tearDownWithError() throws {
-        keychain = nil
+        mockKeychain = nil
         viewModel = nil
     }
     
-    func testLoginSuccessWithoutBody() async throws {
-        let api = MockAPIClient(scenario: .successWithoutBody)
-        let request = try api.createRequest(path: .login, method: .post)
+    func testLoginSuccessWithBody() async throws {
+        mockApi = MockAPIClient(scenario: .successWithBody)
+        viewModel = AuthenticationViewModel(api: mockApi, keychain: mockKeychain)
+        viewModel.email = "test@test.com"
+        viewModel.password = "test"
         
-        let (data, response) = try await api.fetch(request: request)
+        let response = try await viewModel.login()
         
-        XCTAssert(response.statusCode == 204)
-        XCTAssertTrue(data.isEmpty)
-    }
-}
-
-// MARK: - Mock KeychainManager
-class MockKeychainManager: KeychainManagerProtocol {
-    var mockToken: [String: String] = [:]
-    
-    func save(key: String, value: String) {
-        mockToken[key] = value
-    }
-    
-    func read(key: String) -> String? {
-        return mockToken[key]
-    }
-    
-    func delete(key: String) {
-        mockToken.removeValue(forKey: key)
+        XCTAssertEqual(response.token, "testToken")
     }
 }

@@ -13,6 +13,7 @@ enum APIError: Error, Equatable {
     case invalidData
     case invalidResponse
     case invalidStatusCode(HTTPURLResponse)
-    case serverError(HTTPURLResponse)
+    case serverError
     case decodingError
+    case emptyData
 }

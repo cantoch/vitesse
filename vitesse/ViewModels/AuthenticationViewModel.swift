@@ -14,13 +14,15 @@ class AuthenticationViewModel: ObservableObject {
     @Published var isLoggedIn: Bool = false
     
     private let api: APIClient
+    private let keychain: KeychainManagerProtocol
     
-    init(api: APIClient = DefaultAPIClient()) {
+    init(api: APIClient = DefaultAPIClient(), keychain: KeychainManagerProtocol = KeychainManager.shared) {
         self.api = api
+        self.keychain = keychain
     }
     
     @MainActor
-    func login() async throws {
+    func login() async throws -> AuthResponse {
         let loginData = AuthRequest(email: email, password: password)
         let request = try api.createRequest(
             path: .login,
@@ -32,9 +34,11 @@ class AuthenticationViewModel: ObservableObject {
         let (data, _) = try await api.fetch(request: request)
         let response: AuthResponse = try api.decode(data: data)
         
-        KeychainManager.shared.save(key: "AuthStatus", value: String(response.isAdmin))
-        KeychainManager.shared.save(key: "AuthToken", value: response.token)
+        keychain.save(key: "AuthStatus", value: String(response.isAdmin))
+        keychain.save(key: "AuthToken", value: response.token)
         isLoggedIn = true
+        
+        return response
     }
 }
 

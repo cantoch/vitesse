@@ -11,15 +11,14 @@ import Foundation
 
 class CandidateDetailViewModel: ObservableObject {
     @Published var candidates: [Candidate] = []
-    private let keychainManager: KeychainManager
-    private let api: APIClient
     
-    init(
-        keychainManager: KeychainManager = .shared,
-        api: APIClient = DefaultAPIClient()) {
-            self.keychainManager = keychainManager
-            self.api = api
-        }
+    private let api: APIClient
+    private let keychain: KeychainManagerProtocol
+    
+    init(api: APIClient = DefaultAPIClient(), keychain: KeychainManagerProtocol = KeychainManager.shared) {
+        self.api = api
+        self.keychain = keychain
+    }
     
     @MainActor
     func favoriteCandidate(candidate: Candidate) async throws {

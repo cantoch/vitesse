@@ -55,6 +55,9 @@ struct VitesseAPIService: APIClient {
         }
         
         guard (200...299).contains(response.statusCode) else {
+            if response.statusCode >= 500 {
+                throw APIError.serverError
+            }
             throw APIError.invalidStatusCode(response)
         }
         return (data, response)

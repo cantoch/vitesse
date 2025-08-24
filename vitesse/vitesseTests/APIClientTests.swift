@@ -90,7 +90,7 @@ final class APIClientTests: XCTestCase {
         // Given
         let expectedURL = URL(string: "http://127.0.0.1:8080/user/register")!
         let parameters: Encodable = ["key": "value"]
-        let body = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        let body = try api.serializeParameters(parameters: parameters)
         let method: Vitesse.Method = .post
         let token: String? = "token"
         
@@ -119,9 +119,113 @@ final class APIClientTests: XCTestCase {
     func testCreateRequestFailureWithInvalidURL() throws {
         // Given
         let badAPI = VitesseAPIService(session: session, baseURLString: " http://invalid url.com")
-
+        
         // When / Then
         XCTAssertThrowsError(try badAPI.createRequest(path: .login, method: .get)) { error in XCTAssertEqual(error as? APIError, .invalidURL)
+        }
+    }
+    
+    func testCreateRequestWithoutBodyWithoutContentTypeHeader() throws {
+        let request = try api.createRequest(path: .login, method: .get, parameters: nil, token: nil)
+        XCTAssertNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertNil(request.httpBody)
+    }
+    
+    func testCreateRequestWithBodyWithoutContentTypeHeader() throws {
+        // Given
+        let parameters: Encodable = ["key": "value"]
+        
+        // When
+        let request = try api.createRequest(path: .login, method: .get, parameters: parameters, token: nil)
+        
+        // Then
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
+    }
+    
+    func testFetchDataSuccess() async throws {
+        let (_, mockExpectedData, _) = mockResponseProvider.makeMock(for: .successWithBody)
+        let expectedData = try XCTUnwrap(mockExpectedData)
+        let request = try api.createRequest(path: .login, method: .get)
+        let (data, _) = try await api.fetch(request: request)
+        
+        XCTAssertEqual(data, expectedData)
+    }
+    
+    func testFetchDataFailureWithInvalidURL() async throws {
+        // Given
+        _ = mockResponseProvider.makeMock(for: .invalidURL)
+        let request = try api.createRequest(path: .login, method: .get)
+        
+        // When / Then
+        do {
+            _ = try await api.fetch(request: request)
+        } catch {
+            let urlError = error as! URLError
+            XCTAssertEqual(urlError.code, .badURL)
+        }
+    }
+    
+    func testFetchDataFailureWithNoData() async throws {
+        // Given
+        _ = mockResponseProvider.makeMock(for: .emptyData)
+        let request = try api.createRequest(path: .login, method: .get)
+        
+        // When / Then
+        do {
+            _ = try await api.fetch(request: request)
+        } catch {
+            XCTAssertEqual(error as? APIError, .emptyData)
+        }
+    }
+    
+    func testFetchDataWithNetworkError() async throws {
+        // Given
+        _ = mockResponseProvider.makeMock(for: .networkError)
+        let request = try api.createRequest(path: .login, method: .get)
+        
+        // When / Then
+        do {
+            _ = try await api.fetch(request: request)
+        } catch {
+            let urlError = error as! URLError
+            XCTAssertEqual(urlError.code, .notConnectedToInternet)
+        }
+    }
+    
+    func testFetchWithServerError() async throws {
+        // Given
+        _ = mockResponseProvider.makeMock(for: .serverError)
+        let request = try api.createRequest(path: .login, method: .get)
+        
+        // When / Then
+        do {
+            _ = try await api.fetch(request: request)
+        } catch {
+            XCTAssertEqual(error as? APIError, .serverError)
+        }
+    }
+    
+    func testDecodeSuccess() throws {
+        // Given
+        let jsonData = """
+          { "isAdmin": false, "token": "abc123" }
+        """.data(using: .utf8)!
+        
+        // When
+        let result: AuthResponse = try api.decode(data: jsonData)
+        
+        // Then
+        XCTAssertEqual(result, AuthResponse(isAdmin: false, token: "abc123"))
+    }
+    
+    func testDecodeFailureWithIncorrectJSON() throws {
+        // Given
+        let incorrectJSON = "".data(using: .utf8)!
+        
+        // When / Then
+        XCTAssertThrowsError(try { let _: AuthResponse = try self.api.decode(data: incorrectJSON) }()) { error in
+            XCTAssertEqual(error as? APIError, .decodingError)
         }
     }
 }

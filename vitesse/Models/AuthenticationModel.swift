@@ -12,7 +12,7 @@ struct AuthRequest: Encodable {
     let password: String
 }
 
-struct AuthResponse: Decodable {
+struct AuthResponse: Equatable, Decodable {
     let isAdmin: Bool
     let token: String
 }

@@ -36,7 +36,7 @@ enum KeychainError: Error {
     }
 }
 
-class KeychainManager {
+class KeychainManager: KeychainManagerProtocol {
     static let shared = KeychainManager()
     
     private init() {}

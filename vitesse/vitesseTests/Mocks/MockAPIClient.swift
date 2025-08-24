@@ -56,15 +56,34 @@ struct MockAPIClient: APIClient {
         case .successWithBody:
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
             let jsonData = """
-          {
-           "nom prenom": "text"
-          }
-          """.data(using: .utf8)!
+                    {
+                        "isAdmin": false,
+                        "token": "testToken"
+                    }
+                    """.data(using: .utf8)!
             return (jsonData, response)
+            
+        case .candidatesSuccess:
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            let candidatesData = """
+            [
+                {
+                    "phone": "123456789",
+                    "note": "Test note 1",
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "firstName": "John",
+                    "linkedinURL": "https://linkedin.com/john",
+                    "isFavorite": false,
+                    "email": "john@test.com",
+                    "lastName": "Doe"
+                }
+            ]
+            """.data(using: .utf8)!
+            return (candidatesData, response)
             
         case .serverError:
             let response = HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!
-            throw APIError.serverError(response)
+            throw APIError.serverError
             
         case .statusCodeError:
             let response = HTTPURLResponse(url: request.url!, statusCode: 400, httpVersion: nil, headerFields: nil)!
@@ -76,6 +95,9 @@ struct MockAPIClient: APIClient {
         case .emptyData:
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: ["Content-Type": "application/json"])!
             return (Data(), response)
+            
+        case .invalidURL:
+            throw URLError(.badURL)
         }
     }
     
