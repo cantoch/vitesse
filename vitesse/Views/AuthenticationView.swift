@@ -25,6 +25,11 @@ struct AuthenticationView: View {
                     .textInputAutocapitalization(.never)
                 Text("Password")
                 SecureField("Entrez votre mot de passe", text: $viewModel.password)
+                if let error = viewModel.errorMessage {
+                    Text(error.errorDescription ?? "")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
                 Text("Forgot password?")
                     .font(.caption)
             }
@@ -34,7 +39,7 @@ struct AuthenticationView: View {
                 Button("Sign in")
                 {
                     Task {
-                        try? await viewModel.login()
+                        await viewModel.login()
                     }
                 }
                 
@@ -42,9 +47,12 @@ struct AuthenticationView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: 120,maxHeight: 40)
                 .border(Color.black, width: 3)
-                .navigationDestination(isPresented: $viewModel.isLoggedIn) {
-                    CandidateListView()
+                .fullScreenCover(isPresented: $viewModel.isLoggedIn) {
+                    NavigationStack {
+                        CandidateListView(isLoggedIn: $viewModel.isLoggedIn)
+                    }
                 }
+                .interactiveDismissDisabled(true)
                 .background(Color.black)
                 .cornerRadius(40)
                 Spacer()
@@ -65,9 +73,6 @@ struct AuthenticationView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: 100)
             .contentShape(Rectangle())
-//            onTapGesture {
-//                endEditing()
-//            }
         }
     }
 }

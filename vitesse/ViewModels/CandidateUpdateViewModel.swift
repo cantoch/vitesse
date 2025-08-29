@@ -36,7 +36,13 @@ class CandidateUpdateViewModel: ObservableObject {
     @MainActor
     func updateCandidate(candidate: Candidate) async throws {
         guard let token = keychainManager.read(key: "AuthToken") else {
-            fatalError("No token found in keychain")
+            throw CandidateUpdateError.unauthorized
+        }
+        guard let authStatus = keychainManager.read(key: "AuthStatus") else {
+            throw CandidateUpdateError.unauthorized
+        }
+        guard authStatus == "true" else {
+            throw CandidateUpdateError.unauthorized
         }
         do {
             let body = CandidateRequest(

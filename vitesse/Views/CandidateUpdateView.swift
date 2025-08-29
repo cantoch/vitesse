@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CandidateUpdateView: View {
     @ObservedObject var viewModel: CandidateUpdateViewModel
-    @State var showCandidateUpdateSuccess: Bool = false
     @Environment(\.dismiss) var dismiss
+    @State private var errorMessage: CandidateUpdateError? = nil
     
     var body: some View {
         VStack {
@@ -54,14 +54,28 @@ struct CandidateUpdateView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Done") {
                     Task {
-                        if let candidate = viewModel.candidate {
-                            try? await viewModel.updateCandidate(candidate: candidate)
-                            showCandidateUpdateSuccess.toggle()
+                        do {
+                            guard let candidate = viewModel.candidate else {
+                                errorMessage = .unauthorized
+                                return
+                            }
+                            try await viewModel.updateCandidate(candidate: candidate)
                             dismiss()
+                        } catch let error as CandidateUpdateError {
+                            errorMessage = error
+                        } catch {
+                            errorMessage = .unauthorized
                         }
                     }
                 }
             }
+        }
+        .alert(item: $errorMessage) { error in
+            Alert(
+                title: Text("Erreur"),
+                message: Text(error.localizedDescription),
+                dismissButton: .cancel(Text("OK"))
+            )
         }
     }
 }

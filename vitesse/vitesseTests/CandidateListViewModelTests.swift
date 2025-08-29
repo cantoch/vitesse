@@ -15,7 +15,6 @@ final class CandidateListViewModelTests: XCTestCase {
     
     override func setUpWithError() throws {
         mockKeychain = .init()
-        
     }
     
     override func tearDownWithError() throws {

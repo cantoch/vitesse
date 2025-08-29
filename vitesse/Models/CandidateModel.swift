@@ -26,3 +26,16 @@ struct CandidateRequest: Encodable {
     let lastName: String
     let phone: String
 }
+
+enum CandidateUpdateError: Error, Identifiable, LocalizedError {
+    case unauthorized
+    var id: String { localizedDescription }
+
+    var errorDescription: String? {
+        switch self {
+        case .unauthorized:
+            return "Seul un administrateur peut favoriser un candidat."
+        }
+    }
+}
+

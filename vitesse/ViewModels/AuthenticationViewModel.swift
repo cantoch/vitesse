@@ -10,8 +10,9 @@ import Foundation
 class AuthenticationViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
-    @Published var error: String?
+    @Published var errorMessage: AuthError?
     @Published var isLoggedIn: Bool = false
+    
     
     private let api: APIClient
     private let keychain: KeychainManagerProtocol
@@ -22,23 +23,46 @@ class AuthenticationViewModel: ObservableObject {
     }
     
     @MainActor
-    func login() async throws -> AuthResponse {
+    func login() async {
         let loginData = AuthRequest(email: email, password: password)
-        let request = try api.createRequest(
-            path: .login,
-            method: .post,
-            parameters: loginData,
-            token: nil
-        )
-        
-        let (data, _) = try await api.fetch(request: request)
-        let response: AuthResponse = try api.decode(data: data)
-        
-        keychain.save(key: "AuthStatus", value: String(response.isAdmin))
-        keychain.save(key: "AuthToken", value: response.token)
-        isLoggedIn = true
-        
-        return response
+        do {
+            let request = try api.createRequest(
+                path: .login,
+                method: .post,
+                parameters: loginData,
+                token: nil
+            )
+            
+            let (data, response) = try await api.fetch(request: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                errorMessage = .serverError
+                isLoggedIn = false
+            }
+            
+            switch httpResponse.statusCode {
+            case 200..<300:
+                let authResponse: AuthResponse = try api.decode(data: data)
+                keychain.save(key: "AuthStatus", value: String(authResponse.isAdmin))
+                keychain.save(key: "AuthToken", value: authResponse.token)
+                isLoggedIn = true
+                errorMessage = nil
+                
+            case 401:
+                errorMessage = .invalidCredentials
+                isLoggedIn = false
+                
+            case 500...600:
+                errorMessage = .serverError
+                isLoggedIn = false
+                
+            default:
+                errorMessage = .unknown
+                isLoggedIn = false
+            }
+        }
+        catch {
+            errorMessage = .unknown
+            isLoggedIn = false
+        }
     }
 }
-

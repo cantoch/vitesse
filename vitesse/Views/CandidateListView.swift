@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CandidateListView: View {
+    @Binding var isLoggedIn: Bool
     @State var searchText: String = ""
     @State var showFavorites: Bool = false
     @State var goCreationCandidate: Bool = false
@@ -20,7 +21,7 @@ struct CandidateListView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 List {
                     ForEach(filteredCandidates) { candidate in
@@ -49,9 +50,15 @@ struct CandidateListView: View {
                         .font(.headline)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showFavorites.toggle()
-                    }) {Image(systemName: showFavorites ? "star.fill" : "star")}
+                    HStack {
+                        Button(action: {
+                            showFavorites.toggle()
+                        }) {Image(systemName: showFavorites ? "star.fill" : "star")}
+                        Button(action: {
+                            isLoggedIn = false}) {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                            }
+                    }
                 }
                 ToolbarItem(placement: .bottomBar) {
                     Button("Ajouter un candidat") {
@@ -59,42 +66,43 @@ struct CandidateListView: View {
                     }
                 }
             }
-            .task {
-                do {
-                    try await viewModel.getAllCandidates()
-                }
-                catch {
-                    print("Error fetching candidates: \(error)")
-                }
+        }
+        .navigationBarBackButtonHidden(true)
+        .task {
+            do {
+                try await viewModel.getAllCandidates()
             }
-            .sheet(
-                isPresented: $goCreationCandidate,
-                onDismiss: {
-                    Task {
-                        do {
-                            try await viewModel.getAllCandidates()
-                        } catch {
-                            print("Error fetching candidates: \(error)")
-                        }
+            catch {
+                print("Error fetching candidates: \(error)")
+            }
+        }
+        .sheet(
+            isPresented: $goCreationCandidate,
+            onDismiss: {
+                Task {
+                    do {
+                        try await viewModel.getAllCandidates()
+                    } catch {
+                        print("Error fetching candidates: \(error)")
                     }
                 }
-            ) {
-                let emptyRequest = CandidateRequest(
-                    email: "",
-                    note: "",
-                    linkedinURL: "",
-                    firstName: "",
-                    lastName: "",
-                    phone: ""
-                )
-                CandidateCreationView(
-                    viewModel: CandidateCreationViewModel(
-                        candidate: emptyRequest,
-                        keychainManager: KeychainManager.shared,
-                        api: DefaultAPIClient()
-                    )
-                )
             }
+        ) {
+            let emptyRequest = CandidateRequest(
+                email: "",
+                note: "",
+                linkedinURL: "",
+                firstName: "",
+                lastName: "",
+                phone: ""
+            )
+            CandidateCreationView(
+                viewModel: CandidateCreationViewModel(
+                    candidate: emptyRequest,
+                    keychainManager: KeychainManager.shared,
+                    api: DefaultAPIClient()
+                )
+            )
         }
     }
 }
