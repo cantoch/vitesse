@@ -10,6 +10,7 @@ import SwiftUI
 struct AuthenticationView: View {
     @ObservedObject var viewModel = AuthenticationViewModel()
     @State private var showRegistration = false
+    @StateObject private var candidateListVM = CandidateListViewModel()
     
     var body: some View {
         NavigationStack {
@@ -49,7 +50,7 @@ struct AuthenticationView: View {
                 .border(Color.black, width: 3)
                 .fullScreenCover(isPresented: $viewModel.isLoggedIn) {
                     NavigationStack {
-                        CandidateListView(isLoggedIn: $viewModel.isLoggedIn)
+                        CandidateListView(isLoggedIn: $viewModel.isLoggedIn, viewModel: candidateListVM)
                     }
                 }
                 .interactiveDismissDisabled(true)

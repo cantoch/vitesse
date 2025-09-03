@@ -12,8 +12,8 @@ struct CandidateListView: View {
     @State var searchText: String = ""
     @State var showFavorites: Bool = false
     @State var goCreationCandidate: Bool = false
-    
-    @ObservedObject var viewModel = CandidateListViewModel()
+    @ObservedObject var viewModel: CandidateListViewModel
+    @State private var showAlertLogout: Bool = false
     
     private var filteredCandidates: [Candidate] {
         viewModel.candidates.filter { (searchText.isEmpty || $0.lastName.localizedStandardContains(searchText) || $0.firstName.localizedStandardContains(searchText)) && (!showFavorites || $0.isFavorite)
@@ -40,22 +40,22 @@ struct CandidateListView: View {
                     }
                 }
             }
-            .searchable(text: $searchText)
+            .searchable(text: $searchText, prompt: "Rechercher un candidat")
+            .searchPresentationToolbarBehavior(.avoidHidingContent)
+            .navigationTitle(Text("Candidats"))
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
-                }
-                ToolbarItem(placement: .principal) {
-                    Text("Candidats")
-                        .font(.headline)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
                         Button(action: {
                             showFavorites.toggle()
                         }) {Image(systemName: showFavorites ? "star.fill" : "star")}
+                        Spacer(minLength: 14)
                         Button(action: {
-                            isLoggedIn = false}) {
+                            showAlertLogout = true}) {
                                 Image(systemName: "rectangle.portrait.and.arrow.right")
                             }
                     }
@@ -75,6 +75,12 @@ struct CandidateListView: View {
             catch {
                 print("Error fetching candidates: \(error)")
             }
+        }
+        .alert("Voulez-vous vous déconnecter ?", isPresented: $showAlertLogout) {
+            Button("Se déconnecter", role: .destructive) {
+                isLoggedIn = false
+            }
+            Button("Annuler", role: .cancel) { }
         }
         .sheet(
             isPresented: $goCreationCandidate,
