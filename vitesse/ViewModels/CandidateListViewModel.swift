@@ -73,6 +73,19 @@ class CandidateListViewModel: ObservableObject {
             }
         }
     }
+    
+    @MainActor
+    func deleteCandidates(ids: Set<UUID>) async {
+        let candidatesToDelete = candidates.filter { ids.contains($0.id) }
+        for candidate in candidatesToDelete {
+            do {
+                try await deleteCandidateFromServer(candidate: candidate)
+                candidates.removeAll { $0.id == candidate.id }
+            } catch {
+                print("Error deleting candidate: \(error)")
+            }
+        }
+    }
 }
 
 

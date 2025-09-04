@@ -14,6 +14,8 @@ struct CandidateListView: View {
     @State var goCreationCandidate: Bool = false
     @ObservedObject var viewModel: CandidateListViewModel
     @State private var showAlertLogout: Bool = false
+    @State private var selectedIds = Set<UUID>()
+    @State private var editMode: EditMode = .inactive
     
     private var filteredCandidates: [Candidate] {
         viewModel.candidates.filter { (searchText.isEmpty || $0.lastName.localizedStandardContains(searchText) || $0.firstName.localizedStandardContains(searchText)) && (!showFavorites || $0.isFavorite)
@@ -23,7 +25,7 @@ struct CandidateListView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                List {
+                List(selection: $selectedIds) {
                     ForEach(filteredCandidates) { candidate in
                         NavigationLink(destination: CandidateDetailView(candidate: candidate)) {
                             HStack {
@@ -32,6 +34,7 @@ struct CandidateListView: View {
                                 Image(systemName: candidate.isFavorite ? "star.fill" : "star")
                             }
                         }
+                        .tag(candidate.id)
                     }
                     .onDelete { indices in
                         Task {
@@ -61,12 +64,23 @@ struct CandidateListView: View {
                     }
                 }
                 ToolbarItem(placement: .bottomBar) {
-                    Button("Ajouter un candidat") {
-                        goCreationCandidate.toggle()
+                    if editMode.isEditing {
+                        Button("Supprimer") {
+                            Task {
+                                await viewModel.deleteCandidates(ids: selectedIds)
+                                selectedIds.removeAll()
+                            }
+                        }
+                        .disabled(selectedIds.isEmpty)
+                    } else {
+                        Button("Ajouter un candidat") {
+                            goCreationCandidate.toggle()
+                        }
                     }
                 }
             }
         }
+        .environment(\.editMode, $editMode)
         .navigationBarBackButtonHidden(true)
         .task {
             do {
