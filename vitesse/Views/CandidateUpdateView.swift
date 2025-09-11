@@ -12,6 +12,8 @@ struct CandidateUpdateView: View {
     @Environment(\.dismiss) var dismiss
     @State private var errorMessage: CandidateUpdateError? = nil
     
+    var onUpdated: (Candidate) -> Void = { _ in }
+    
     var body: some View {
         VStack {
             VStack(alignment: .leading) {
@@ -60,6 +62,9 @@ struct CandidateUpdateView: View {
                                 return
                             }
                             try await viewModel.updateCandidate(candidate: candidate)
+                            if let updated = viewModel.candidate {
+                                onUpdated(updated)
+                            }
                             dismiss()
                         } catch let error as CandidateUpdateError {
                             errorMessage = error

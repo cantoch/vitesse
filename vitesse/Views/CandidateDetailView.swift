@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct CandidateDetailView: View {
+    @State private var candidate: Candidate
     @State var isFavorite: Bool
     @State var isAdmin: Bool = false
     @State var goEdit: Bool = false
     
     @ObservedObject var viewModel = CandidateDetailViewModel()
     
-    let candidate: Candidate
-    
     init(candidate: Candidate) {
+        _candidate = .init(initialValue: candidate)
         _isFavorite = .init(initialValue: candidate.isFavorite)
-        self.candidate = candidate
     }
     
     var body: some View {
@@ -48,7 +47,7 @@ struct CandidateDetailView: View {
                 Text("Phone")
                     .fontWeight(.bold)
                     .frame(width: 100, height: 30, alignment: .leading)
-                Text(String(candidate.phone))
+                Text(candidate.phone)
                 Spacer()
             }
             .padding(.bottom, 10)
@@ -83,12 +82,16 @@ struct CandidateDetailView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Edit") {
-                    goEdit = true
-                }
-                .navigationDestination(isPresented: $goEdit) {
-                    CandidateUpdateView(viewModel: CandidateUpdateViewModel(candidate: candidate))
-                }
+                Button("Edit") { goEdit = true }
+                    .navigationDestination(isPresented: $goEdit) {
+                        CandidateUpdateView(
+                            viewModel: CandidateUpdateViewModel(candidate: candidate),
+                            onUpdated: { updated in
+                                candidate = updated
+                                isFavorite = updated.isFavorite
+                            }
+                        )
+                    }
             }
         }
         .padding(30)

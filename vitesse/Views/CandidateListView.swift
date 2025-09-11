@@ -25,7 +25,8 @@ struct CandidateListView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                List(selection: $selectedIds) {
+                List(selection: editMode.isEditing ? $selectedIds : .constant(selectedIds))
+                {
                     ForEach(filteredCandidates) { candidate in
                         NavigationLink(destination: CandidateDetailView(candidate: candidate)) {
                             HStack {

@@ -27,7 +27,7 @@
 		9A23A4092E1FF7C400D744D0 /* Vitesse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vitesse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A23A4162E1FF7C600D744D0 /* VitesseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitesseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A23A4202E1FF7C600D744D0 /* VitesseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VitesseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9AD32D3C2E536A5E001E2AD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A34B3FC2E732E7D002DA84D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -120,7 +120,7 @@
 		9A23A4002E1FF7C400D744D0 = {
 			isa = PBXGroup;
 			children = (
-				9AD32D3C2E536A5E001E2AD2 /* Info.plist */,
+				9A34B3FC2E732E7D002DA84D /* Info.plist */,
 				9AD7C3A02E402FE1003EF579 /* vitesse */,
 				9A5F4FAE2E313B1600AAA8C6 /* Utils */,
 				9A23A4332E1FF81000D744D0 /* Models */,

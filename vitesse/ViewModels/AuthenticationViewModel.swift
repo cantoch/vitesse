@@ -34,12 +34,8 @@ class AuthenticationViewModel: ObservableObject {
             )
             
             let (data, response) = try await api.fetch(request: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                errorMessage = .serverError
-                isLoggedIn = false
-            }
             
-            switch httpResponse.statusCode {
+            switch response.statusCode {
             case 200..<300:
                 let authResponse: AuthResponse = try api.decode(data: data)
                 keychain.save(key: "AuthStatus", value: String(authResponse.isAdmin))

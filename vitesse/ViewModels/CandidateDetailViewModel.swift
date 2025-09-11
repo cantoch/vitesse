@@ -25,7 +25,6 @@ class CandidateDetailViewModel: ObservableObject {
         guard let token = KeychainManager.shared.read(key: "AuthToken") else {
             fatalError("No token found in keychain")
         }
-        
         do {
             let request = try api.createRequest(
                 path: .favorite(candidate.id),

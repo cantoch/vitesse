@@ -18,7 +18,5 @@
 	<true/>
 	<key>UILaunchScreen</key>
 	<dict/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>fr</string>
 </dict>
 </plist>
